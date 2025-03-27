@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>線材庫存異動表單</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f8;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+    }
+    .form-card {
+      background: linear-gradient(180deg, #ffffff, #f8f9fb);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    h2 {
+      text-align: center;
+      color: #004080;
+    }
+    label {
+      margin-top: 16px;
+      display: block;
+      font-weight: bold;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 4px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: #2a4d8f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1d3569;
+    }
+  </style>
+  <script>
+    function setToday() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      document.getElementById("date").value = yyyy + "/" + mm + "/" + dd;
+    }
+    window.onload = setToday;
+let submitted = false;
+  
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const iframe = document.querySelector("iframe");
+  iframe.onload = function () {
+    if (submitted) {
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("confirmBox").style.display = "block";
+    }
+  };
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  submitted = true;
+  btn.textContent = "送出中...";
+}
+
+function resetForm() {
+  document.querySelector("form").reset();
+  setToday();
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("submitBtn").textContent = "送出";
+  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("confirmBox").style.display = "none";
+}
+</script>
+
+</head>
+<body>
+  <div class="form-card">
+    <h2 style="margin-bottom: 4px;">瑞鑫電子科技有限公司</h2><p style="text-align:center; margin-top: 0; font-size: 16px; color: #555;">📋 鑫大統 - 進銷存表單</p>
+    <form method="POST" onsubmit="handleSubmit(event);" action="https://script.google.com/macros/s/AKfycbx3F2ZAA5myIlIIIg-Yp4MEut-Vzb5aXqYeax31ZiF-3qPF9wBUom_NtM8-EdEz5lVhGw/exec" target="hidden_iframe" onsubmit="submitted=true;">
+      <label>日期</label>
+      <input type="text" name="date" id="date" readonly />
+
+      
+<label>線材名稱</label>
+<select name="wire_name" required>
+  <option value="">請選擇線材</option>
+  <option value="GPT 18 AWG（黑）">GPT 18 AWG（黑）</option>
+  <option value="GPT 18 AWG（紅）">GPT 18 AWG（紅）</option>
+  <option value="GPT 18 AWG（白）">GPT 18 AWG（白）</option>
+  <option value="GPT 18 AWG（黃）">GPT 18 AWG（黃）</option>
+  <option value="GPT 18 AWG（棕）">GPT 18 AWG（棕）</option>
+  <option value="1015 12 AWG（黑）">1015 12 AWG（黑）</option>
+  <option value="1015 12 AWG（紅）">1015 12 AWG（紅）</option>
+</select>
+<div id="stock_display" style="margin-top: 8px; font-size: 14px; color: #2a4d8f;"></div>
+
+
+      <label>數量</label>
+      <input type="number" name="qty" required min="1" inputmode="numeric" />
+
+            <label>出/入庫</label>
+      <select name="io" required>
+        <option value="">請選擇...</option>
+        <option value="入庫">入庫</option>
+        <option value="出庫">出庫</option>
+      </select>
+<div id="stock_display" style="margin-top: 8px; font-size: 14px; color: #2a4d8f;"></div>
+
+      
+<label>領料人員</label>
+<select name="user" id="user_select" onchange="toggleCustomUser()" required>
+  <option value="">請選擇領料人員</option>
+  <option value="黃阿鬆">黃阿鬆</option>
+  <option value="陳鈞維">陳鈞維</option>
+  <option value="黃密">黃密</option>
+  <option value="其他">其他</option>
+</select>
+<div id="stock_display" style="margin-top: 8px; font-size: 14px; color: #2a4d8f;"></div>
+<div id="custom_user_box" style="display:none; margin-top:8px;">
+  <input type="text" id="custom_user_input" placeholder="請輸入姓名" oninput="updateUserValue()" />
+</div>
+
+
+      <label>備註</label>
+      <textarea name="note" rows="2" placeholder="其他補充說明（可選填）"></textarea>
+
+      
+<button id="submitBtn" type="submit">送出</button>
+<div id="confirmBox" style="display:none; margin-top: 16px; text-align:center;">
+  <p style="color: green;">✔️ 表單已成功送出</p>
+  <button type="button" onclick="resetForm()" style="padding:10px 20px; border:none; background:#2a4d8f; color:white; border-radius:6px;">確認</button>
+</div>
+
+    </form>
+  </div>
+  <iframe name="hidden_iframe" style="display:none;" 
+    onload="if(submitted) { alert('✅ 已成功送出'); window.location.reload(); }"></iframe>
+  <script>let submitted = false;
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const iframe = document.querySelector("iframe");
+  iframe.onload = function () {
+    if (submitted) {
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("confirmBox").style.display = "block";
+    }
+  };
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  submitted = true;
+  btn.textContent = "送出中...";
+}
+
+function resetForm() {
+  document.querySelector("form").reset();
+  setToday();
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("submitBtn").textContent = "送出";
+  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("confirmBox").style.display = "none";
+}
+</script>
+
+
+<script>
+function toggleCustomUser() {
+  const sel = document.getElementById("user_select");
+  const customBox = document.getElementById("custom_user_box");
+  if (sel.value === "其他") {
+    customBox.style.display = "block";
+    sel.name = ""; // 移除原 select name，避免送出
+    document.getElementById("custom_user_input").name = "user";
+  } else {
+    customBox.style.display = "none";
+    sel.name = "user";
+    document.getElementById("custom_user_input").name = "";
+  }
+}
+function updateUserValue() {
+  document.getElementById("user_select").value = "其他";
+}
+
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const iframe = document.querySelector("iframe");
+  iframe.onload = function () {
+    if (submitted) {
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("confirmBox").style.display = "block";
+    }
+  };
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  submitted = true;
+  btn.textContent = "送出中...";
+}
+
+function resetForm() {
+  document.querySelector("form").reset();
+  setToday();
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("submitBtn").textContent = "送出";
+  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("confirmBox").style.display = "none";
+}
+</script>
+
+
+
+<script>
+  document.querySelector('select[name="wire_name"]').addEventListener("change", function() {
+    const name = this.value;
+    const stockDisplay = document.getElementById("stock_display");
+    if (!name) {
+      stockDisplay.textContent = "";
+      return;
+    }
+    stockDisplay.textContent = "📦 查詢中...";
+    fetch("https://script.google.com/macros/s/AKfycbzRi7Xx7KxoynPVnJsJTmh84TIVGYJKj0bhcpXZGcQUve6MncXVm-KLCN9M9VmaGtXTjg/exec?name=" + encodeURIComponent(name))
+      .then(res => res.text())
+      .then(txt => {
+        stockDisplay.textContent = "📦 目前庫存：" + txt + " 丸";
+      })
+      .catch(() => {
+        stockDisplay.textContent = "❌ 查詢失敗";
+      });
+  });
+
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const iframe = document.querySelector("iframe");
+  iframe.onload = function () {
+    if (submitted) {
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("confirmBox").style.display = "block";
+    }
+  };
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  submitted = true;
+  btn.textContent = "送出中...";
+}
+
+function resetForm() {
+  document.querySelector("form").reset();
+  setToday();
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("submitBtn").textContent = "送出";
+  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("confirmBox").style.display = "none";
+}
+</script>
+
+</body>
+
+</html>
