@@ -93,6 +93,15 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    /*出入庫選擇變色提示*/
+    select#io.in {
+      background-color: #eafaf1;
+      border-color: #2ecc71;
+    }
+    select#io.out {
+      background-color: #fdecea;
+      border-color: #e74c3c;
+    }
 </style>
 <script>
 let submitted = false;
@@ -204,6 +213,15 @@ function loadVendorData() {
       document.getElementById("loadingOverlay").style.display = "none";
     });
 }
+/*出入庫選擇變色提示*/
+function updateIoStyle(selectE1){
+  selectE1.classList.remove("in","out");
+  if (selectE1.value === "入庫"){
+    selectE1.classList.add("in");
+  }else if (selectE1.value === "出庫"){
+    selectE1.classList.add("out");
+  }
+}
 
 window.onload = function() {
   setToday();
@@ -219,7 +237,7 @@ window.onload = function() {
 <div class="form-card">
 <h2 style="margin-bottom: 4px;">瑞鑫電子科技有限公司</h2><p style="text-align:center; margin-top: 0; font-size: 16px; color: #555;">📋 線材進銷存表單</p>
 <form action="https://script.google.com/macros/s/AKfycbxaLrj4P178mILRkg_kuK_ObWCZ35KjEEi26WI6USHBF_VDGZeQPEkPMBZmbYCumroE/exec" method="POST" onsubmit="lockSubmitButton(); submitted=true;" target="hidden_iframe">
-<label>日期</label>
+<label>📆 日期</label>
 <input id="date" name="date" readonly="readonly" style="background-color: #f0f0f0; color: #666;" type="text"/>
 <label>廠商名稱</label>
 <select id="vendor_select" name="vendor" required="">
@@ -230,14 +248,15 @@ window.onload = function() {
 <option value="">請選擇線材</option>
 </select>
 <div id="stock_display" style="margin-top: 8px; font-size: 14px; color: #2a4d8f;"></div>
-<label>數量</label>
+<label>🔢 數量</label>
 <input inputmode="numeric" min="1" name="qty" required="" type="number"/>
-<label>出/入庫</label>
-<select name="io" required=""><option value="">請選擇...</option>
+<label>📦 出/入庫</label>
+<select id="io" name="io" required onchange="updateIoStyle(this)"> 
+<option value="">請選擇...</option>
 <option value="入庫">入庫</option>
 <option value="出庫">出庫</option>
 </select>
-<label>領料人員</label>
+<label>👤 領料人員</label>
 <select id="user_select" name="user" onchange="toggleCustomUser()" required="">
 <option value="">請選擇領料人員</option>
 <option value="黃阿鬆">黃阿鬆</option>
